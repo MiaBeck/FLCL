@@ -1,10 +1,12 @@
 from typing import Tuple
+from entity import Entity
 
 from game_map import GameMap
 import tile_types
 from typing import Iterator, Tuple
 import random
 import tcod
+import entity_factories
 import global_vars
 import numpy as np
 
@@ -72,20 +74,47 @@ class Road:
             and self.y2 >= other.y1
         )
 
+def place_entities(
+    room: Road, city: GameMap,
+) -> None:
+    number_of_police = 1
+    for i in range(number_of_police):
+        x = random.randint(room.x1, room.x2-1)
+        y = random.randint(room.y1, room.y2-1) 
+        if not any(entity.x == x and entity.y == y for entity in city.entities):
+            entity_factories.police.spawn(city, x, y)
 
-def generate_city(map_width, map_height) -> GameMap:
-    city = GameMap(map_width, map_height)
+
+def generate_city(map_width, map_height, player:Entity) -> GameMap:
+    city = GameMap(map_width, map_height, entities=[player])
 
     roads: List[Road] = []
     buildings: List[Building] = []
     roads = generate_roads(map_width, map_height)
     for road in roads:
         city.tiles[road.area] = tile_types.road
+    
+    # The road we'll spawn the player on, we won't spawn police there.
+    player_road_reference = random.randint(0,len(roads)-1)
+
+    for i in range(global_vars.number_police):
+        if i==0:
+            player_road = roads[player_road_reference]
+            x = random.randint(player_road.x1, player_road.x2-1)
+            y = random.randint(player_road.y1, player_road.y2-1) 
+            player.x, player.y = x, y
+        
+        police_road_reference = player_road_reference
+        road = roads[police_road_reference]
+        while police_road_reference == player_road_reference:
+            police_road_reference = random.randint(0,len(roads)-1)
+            road = roads[police_road_reference]
+        place_entities(road, city)
+
     # Generate buildings
-    number_buildings = 450#random.randrange(600,800)
+    number_buildings = random.randrange(global_vars.min_number_buildings,global_vars.max_number_buildings)
     for tag in range(number_buildings):
         while(True):
-            print(tag)
             #determine size and location
             size_x = random.randrange(global_vars.min_building_edge,global_vars.max_building_edge)
             size_y = random.randrange(max(global_vars.min_building_edge,size_x-global_vars.max_building_edge_range),min(global_vars.max_building_edge,size_x+global_vars.max_building_edge_range))
@@ -164,8 +193,8 @@ def generate_roads(width, height):
                 # Generate a corner, a road to the corner from the root, and from corner to goal
                 corner = road_corner(root, goal)
 
-                roads.append(Road(x_root=root[0], y_root=root[1], x_goal=corner[0], y_goal=corner[1], width=3))
-                roads.append(Road(x_root=corner[0], y_root=corner[1], x_goal=goal[0], y_goal=goal[1], width=3))
+                roads.append(Road(x_root=root[0], y_root=root[1], x_goal=corner[0], y_goal=corner[1], width=1))
+                roads.append(Road(x_root=corner[0], y_root=corner[1], x_goal=goal[0], y_goal=goal[1], width=1))
                 
                 # Get the points between so you may update the arrays with what exists
                 for x, y in road_between(root, goal, corner):
