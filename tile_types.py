@@ -39,8 +39,14 @@ def new_tile(
 def new_building_tile(*, size: int, tag: int) -> np.ndarray:
     colour = utils.building_colour(size)
     light = (ord(" "), (colour, colour, colour), (colour, colour, colour))
-
-    return np.array((False, False, light, light, tag), dtype=tile_dt)
+    return new_tile(
+        walkable=False,
+        transparent=False,
+        dark=light,
+        light=light,
+        building_tag=tag,
+    )
+    #return np.array((False, False, light, light, tag), dtype=tile_dt)
 
 road = new_tile(
     walkable=True,
@@ -52,8 +58,8 @@ road = new_tile(
 floor = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord(" "), (255, 255, 255), (50, 50, 150)),
-    light=(ord(" "), (255, 255, 255), (200, 180, 50)),
+    dark=(ord(" "), (255, 255, 255), (37,76,0)),
+    light=(ord(" "), (255, 255, 255), (37,76,0)),
     building_tag=0,
 )
 wall = new_tile(
