@@ -164,8 +164,8 @@ def generate_roads(width, height):
                 # Generate a corner, a road to the corner from the root, and from corner to goal
                 corner = road_corner(root, goal)
 
-                roads.append(Road(x_root=root[0], y_root=root[1], x_goal=corner[0], y_goal=corner[1], width=3))
-                roads.append(Road(x_root=corner[0], y_root=corner[1], x_goal=goal[0], y_goal=goal[1], width=3))
+                roads.append(Road(x_root=root[0], y_root=root[1], x_goal=corner[0], y_goal=corner[1], width=1))
+                roads.append(Road(x_root=corner[0], y_root=corner[1], x_goal=goal[0], y_goal=goal[1], width=1))
                 
                 # Get the points between so you may update the arrays with what exists
                 for x, y in road_between(root, goal, corner):
