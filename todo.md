@@ -1,4 +1,7 @@
 #TODO#
+-REMOVE USELESS FUNCS IN PROCGEN
+-UPLOAD YOUR CODE
+
 - Change buildings to entity.
 - Add build building func
 - Randomly
