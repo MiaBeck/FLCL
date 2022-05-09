@@ -73,3 +73,10 @@ class HostileEnemy(BaseAI):
                 ).perform()
 
         return WaitAction(self.entity).perform()
+
+class BuildingAI(BaseAI):
+    def __init__(self, entity: Actor):
+        super().__init__(entity)
+        self.path: List[Tuple[int, int]] = []
+    def perform(self) -> None:
+        return WaitAction(self.entity).perform()

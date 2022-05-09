@@ -69,6 +69,11 @@ class GameMap:
         )
 
         for entity in entities_sorted_for_rendering:
-            console.print(
-                    x=entity.x, y=entity.y, string=entity.char, fg=entity.color
-                )
+            if entity.tile:
+                console.print(
+                        x=entity.x, y=entity.y, string=entity.char, bg=entity.color
+                    )
+            else:
+                console.print(
+                        x=entity.x, y=entity.y, string=entity.char, fg=entity.color
+                    )

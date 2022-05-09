@@ -26,6 +26,7 @@ class Entity:
         y: int = 0,
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
+        tile:bool=False,
         name: str = "<Unnamed>",
         blocks_movement: bool = False,
         render_order: RenderOrder = RenderOrder.CORPSE,
@@ -34,6 +35,7 @@ class Entity:
         self.y = y
         self.char = char
         self.color = color
+        self.tile = tile
         self.name = name
         self.blocks_movement = blocks_movement
         self.render_order = render_order
@@ -75,6 +77,7 @@ class Actor(Entity):
         y: int = 0,
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
+        tile:bool=False,
         name: str = "<Unnamed>",
         ai_cls: Type[BaseAI],
         fighter: Fighter
@@ -84,6 +87,7 @@ class Actor(Entity):
             y=y,
             char=char,
             color=color,
+            tile=tile,
             name=name,
             blocks_movement=True,
             render_order=RenderOrder.ACTOR,
