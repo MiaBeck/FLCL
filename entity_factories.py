@@ -1,5 +1,19 @@
-from entity import Entity
+from components.ai import HostileEnemy
+from components.fighter import Fighter
+from entity import Actor
 
-player = Entity(char="@", color=(255, 0, 0), name="Player", blocks_movement=True)
+player = Actor(
+    char="@",
+    color=(255, 255, 255),
+    name="Player",
+    ai_cls=HostileEnemy,
+    fighter=Fighter(hp=30, defense=2, power=5),
+)
 
-police = Entity(char="P", color=(15, 82, 186), name="Police", blocks_movement=True)
+police = Actor(
+    char="P",
+    color=(15, 82, 186),
+    name="Police", 
+    ai_cls=HostileEnemy,
+    fighter=Fighter(hp=10, defense=0, power=3),
+)
