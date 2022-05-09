@@ -5,14 +5,10 @@ from engine import Engine
 import entity_factories
 from procgen import generate_city
 from input_handlers import EventHandler
+import global_vars
 
 
 def main() -> None:
-    screen_width = 210
-    screen_height = 75
-
-    map_width = 200
-    map_height = 70
 
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
@@ -22,17 +18,17 @@ def main() -> None:
 
     engine = Engine(player=player)
 
-    engine.game_map = generate_city(map_width, map_height, engine=engine)
+    engine.game_map = generate_city(global_vars.map_width, global_vars.map_height, engine=engine)
 
 
     with tcod.context.new_terminal(
-        screen_width,
-        screen_height,
+        global_vars.screen_width,
+        global_vars.screen_height,
         tileset=tileset,
         title="FLCL inspired proof of concept",
         vsync=True,
     ) as context:
-        root_console = tcod.Console(screen_width, screen_height, order="F")
+        root_console = tcod.Console(global_vars.screen_width, global_vars.screen_height, order="F")
         while True:
             engine.render(console=root_console, context=context)
 

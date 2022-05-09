@@ -1,4 +1,5 @@
 from typing import Tuple
+from xmlrpc.client import Boolean
 
 from game_map import GameMap
 import tile_types
@@ -8,8 +9,9 @@ import tcod
 import entity_factories
 import global_vars
 import numpy as np
-
+from entity import Actor
 from engine import Engine
+
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -77,15 +79,20 @@ class Road:
             and self.y2 >= other.y1
         )
 
-def place_entities(
+def place_police(
     room: Road, city: GameMap,
 ) -> None:
     number_of_police = 1
     for i in range(number_of_police):
         x = random.randint(room.x1, room.x2-1)
         y = random.randint(room.y1, room.y2-1) 
-        if not any(entity.x == x and entity.y == y for entity in city.entities):
-            entity_factories.police.spawn(city, x, y)
+        place_entity(x,y,city,entity_factories.police)
+
+def place_entity(
+    x: int, y: int, city: GameMap, place: Actor,
+) -> Boolean:
+    if not any(entity.x == x and entity.y == y for entity in city.entities):
+        place.spawn(city, x, y)
 
 
 def generate_city(map_width, map_height, engine: Engine) -> GameMap:
@@ -114,7 +121,7 @@ def generate_city(map_width, map_height, engine: Engine) -> GameMap:
         while police_road_reference == player_road_reference:
             police_road_reference = random.randint(0,len(roads)-1)
             road = roads[police_road_reference]
-        place_entities(road, city)
+        place_police(road, city)
 
     # Generate buildings
     number_buildings = random.randrange(global_vars.min_number_buildings,global_vars.max_number_buildings)
@@ -137,7 +144,7 @@ def generate_city(map_width, map_height, engine: Engine) -> GameMap:
                 buildings.append(new_building)
                 for i in range(new_building.x1,new_building.x2):
                     for j in range(new_building.y1,new_building.y2):
-                        city.tiles[i][j] = tile_types.new_building_tile(size=size_x*size_y, tag=tag)
+                        place_entity(x=i, y=j, city=city, place=entity_factories.building(tag=tag, size=size_x*size_y))
                 break
 
     return city
@@ -150,9 +157,9 @@ def generate_roads(width, height):
         roads=[]
         
         # Number of points of interest, roads need to connect through these
-        vertical_roads_number = random.randrange(2,5) # Top to bottom connections
-        horizontal_roads_number = random.randrange(2,5) #L/R connections
-        intersections = random.randrange(15,25)
+        vertical_roads_number = random.randrange(global_vars.min_road_edges,global_vars.max_road_edges)# Top to bottom connections
+        horizontal_roads_number = random.randrange(global_vars.min_road_edges,global_vars.max_road_edges) #L/R connections
+        intersections = random.randrange(global_vars.min_intersections,global_vars.max_intersections)
 
         # Add points of interest to the graph
         for x in range(vertical_roads_number):
