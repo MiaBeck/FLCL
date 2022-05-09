@@ -18,13 +18,12 @@ def main() -> None:
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
     )
 
-    event_handler = EventHandler()
-
     player = copy.deepcopy(entity_factories.player)
 
-    game_map = generate_city(map_width, map_height, player)
+    engine = Engine(player=player)
 
-    engine = Engine(event_handler=event_handler, game_map=game_map, player=player)
+    engine.game_map = generate_city(map_width, map_height, engine=engine)
+
 
     with tcod.context.new_terminal(
         screen_width,
@@ -37,9 +36,7 @@ def main() -> None:
         while True:
             engine.render(console=root_console, context=context)
 
-            events = tcod.event.wait()
-
-            engine.handle_events(events)
+            engine.event_handler.handle_events()
 
 
 if __name__ == "__main__":

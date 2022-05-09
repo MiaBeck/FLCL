@@ -1,15 +1,18 @@
 from typing import Tuple
-from entity import Entity
 
 from game_map import GameMap
 import tile_types
-from typing import Iterator, Tuple
+from typing import Iterator, List, Tuple, TYPE_CHECKING
 import random
 import tcod
 import entity_factories
 import global_vars
 import numpy as np
 
+from engine import Engine
+
+if TYPE_CHECKING:
+    from engine import Engine
 
 
 class Building:
@@ -85,8 +88,10 @@ def place_entities(
             entity_factories.police.spawn(city, x, y)
 
 
-def generate_city(map_width, map_height, player:Entity) -> GameMap:
-    city = GameMap(map_width, map_height, entities=[player])
+def generate_city(map_width, map_height, engine: Engine) -> GameMap:
+
+    player = engine.player
+    city = GameMap(engine, map_width, map_height, entities=[player])
 
     roads: List[Road] = []
     buildings: List[Building] = []
@@ -101,8 +106,8 @@ def generate_city(map_width, map_height, player:Entity) -> GameMap:
         if i==0:
             player_road = roads[player_road_reference]
             x = random.randint(player_road.x1, player_road.x2-1)
-            y = random.randint(player_road.y1, player_road.y2-1) 
-            player.x, player.y = x, y
+            y = random.randint(player_road.y1, player_road.y2-1)
+            player.place(x, y, city) 
         
         police_road_reference = player_road_reference
         road = roads[police_road_reference]
